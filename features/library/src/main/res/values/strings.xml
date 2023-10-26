@@ -1,3 +1,5 @@
 <resources>
     <string name="toolbar_title">Library</string>
+    <string name="nothing_found">Nothing found</string>
+    <string name="please_try_again">please try again</string>
 </resources>

@@ -1,11 +1,16 @@
 package com.yomu.library.ui
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.yomu.core.model.MockCategories
 import com.yomu.core.model.YomuMangaModel
-import com.yomu.library.model.LibraryPagerTabModel
+import com.yomu.domain.repository.model.library.filters.Display
+import com.yomu.domain.repository.model.library.filters.Filter
+import com.yomu.domain.repository.model.library.filters.Sort
+import com.yomu.domain.repository.model.library.tabs.LibraryPagerTabs
 import com.yomu.library.model.LibraryScreenModel
+import com.yomu.library.usecase.GetFilterListUseCase
+import com.yomu.library.usecase.GetLibraryTabsUseCase
 import com.yomu.library.usecase.GetMangaListByCategoriesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -19,18 +24,69 @@ import javax.inject.Inject
 @HiltViewModel
 open class LibraryViewModel @Inject constructor(
     private val getMangaListByCategoriesUseCase: GetMangaListByCategoriesUseCase,
+    private val getFilterListUseCase: GetFilterListUseCase,
+    private val getLibraryTabsUseCase: GetLibraryTabsUseCase
 ) : ViewModel() {
 
     private var mangaFlowJob: Job? = null
+    private var filterFlowJob: Job? = null
+    private var tabsFlowJob: Job? = null
     private var originalMangaList = listOf<YomuMangaModel>()
 
     private val _state = MutableStateFlow(LibraryScreenModel())
     val state = _state.asStateFlow()
 
-
     init {
         getTabList()
+        getFilterList()
         getMangaListByCategory(_state.value.tabsList.first().category)
+    }
+
+    private fun getMangaListByCategory(category: LibraryPagerTabs) {
+        mangaFlowJob?.cancel()
+        mangaFlowJob = viewModelScope.launch {
+            getMangaListByCategoriesUseCase.execute(category)
+                .cancellable()
+                .collect {
+                    originalMangaList = it
+                    _state.emit(state.value.copy(mangaList = it))
+                }
+        }
+    }
+
+    private fun getFilterList() {
+        filterFlowJob?.cancel()
+        filterFlowJob = viewModelScope.launch {
+            getFilterListUseCase.execute()
+                .collect {
+                    _state.emit(state.value.copy(filterList = it))
+                }
+        }
+    }
+
+    private fun getMangaListByText(text: String) {
+        mangaFlowJob = viewModelScope.launch {
+            val currentState = _state.value
+
+            val filteredList: List<YomuMangaModel> = if (text.isEmpty()) {
+                originalMangaList
+            } else {
+                originalMangaList.filter { it.name.contains(text, ignoreCase = true) }
+            }
+
+            mangaFlowJob?.cancel()
+            _state.emit(currentState.copy(mangaList = filteredList))
+        }
+    }
+
+    private fun getTabList() {
+        tabsFlowJob?.cancel()
+        tabsFlowJob = viewModelScope.launch {
+            getLibraryTabsUseCase.execute()
+                .collect {
+                    _state.emit(state.value.copy(tabsList = it))
+                }
+        }
     }
 
     fun onSearchScreensChange(text: String) {
@@ -49,42 +105,19 @@ open class LibraryViewModel @Inject constructor(
         }
     }
 
-    fun onTabSelected(category: MockCategories) {
+    fun onTabSelected(category: LibraryPagerTabs) {
         getMangaListByCategory(category)
     }
 
-    private fun getMangaListByCategory(category: MockCategories) {
-        mangaFlowJob?.cancel()
-        mangaFlowJob = viewModelScope.launch {
-            getMangaListByCategoriesUseCase.execute(category)
-                .cancellable()
-                .collect {
-                    originalMangaList = it
-                    _state.emit(state.value.copy(mangaList = it))
-                }
-        }
+    fun onFilterChanged(filter: Filter) {
+        Log.d("test", "$filter")
     }
 
-    private fun getMangaListByText(text: String) {
-        val currentState = _state.value
-
-        val filteredList = if (text.isEmpty()) {
-            originalMangaList
-        } else {
-            originalMangaList.filter { it.name.contains(text, ignoreCase = true) }
-        }
-
-        mangaFlowJob?.cancel()
-        mangaFlowJob = viewModelScope.launch {
-            _state.emit(currentState.copy(mangaList = filteredList))
-        }
+    fun onSortChanged(sort: Sort) {
+        Log.d("test", "$sort")
     }
 
-    private fun getTabList() {
-        _state.value.tabsList = listOf(
-            LibraryPagerTabModel(MockCategories.READING, "Reading"),
-            LibraryPagerTabModel(MockCategories.WILL_READ, "Will read"),
-            LibraryPagerTabModel(MockCategories.READ_IT, "Read it")
-        )
+    fun onDisplayChanged(display: Display) {
+        Log.d("test", "$display")
     }
 }

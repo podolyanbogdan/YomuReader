@@ -1,6 +1,5 @@
 package com.yomu.library.ui.toolbar
 
-import android.util.Log
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -20,8 +19,9 @@ import com.yomu.library.R
 fun LibraryToolbar(
     title: String,
     searchText: String,
-    onSearchScreensChange: (String) -> Unit = {},
-    onSearchModeClosed: () -> Unit = {},
+    onSearchScreensChange: (String) -> Unit,
+    onSearchModeClosed: () -> Unit,
+    onFilterClick: () -> Unit
 ) {
     var isSearching by remember { mutableStateOf(false) }
 
@@ -38,7 +38,7 @@ fun LibraryToolbar(
                         contentDescription = null
                     )
                 }
-                IconButton(onClick = {}) {
+                IconButton(onClick = { onFilterClick.invoke() }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_sort),
                         contentDescription = null

@@ -18,13 +18,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 
@@ -39,7 +40,8 @@ fun BaseYomuSearchToolbar(
     onBackClick: (() -> Unit)? = null,
 ) {
     var isFocused by remember { mutableStateOf(false) }
-    val keyboardController = LocalSoftwareKeyboardController.current
+    val localSoftwareKeyboardController = staticCompositionLocalOf<SoftwareKeyboardController?> { null }
+    val controller = localSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
 
     BaseYomuToolbar(
@@ -76,7 +78,7 @@ fun BaseYomuSearchToolbar(
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = {
-                    keyboardController?.hide()
+                    controller?.hide()
                 }),
             )
         }
