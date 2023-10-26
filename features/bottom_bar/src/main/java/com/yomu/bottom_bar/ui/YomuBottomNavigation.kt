@@ -38,6 +38,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.yomu.bottom_bar.R
 import com.yomu.bottom_bar.model.YomuBottomNavigationModel
 import com.yomu.bottom_bar.tabs.YomuTab
+import com.yomu.core.colors.LocalAppColors
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.shareIn
 
@@ -126,7 +127,7 @@ private fun Tab(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
             ),
-        color = colorResource(id = R.color.colorYomuNavigationBackground),
+        color = LocalAppColors.current.colorYomuNavigationBackground,
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -139,7 +140,7 @@ private fun Tab(
 
             Text(
                 text = stringResource(id = tab.title),
-                color = colorResource(R.color.colorPrimary),
+                color = LocalAppColors.current.colorPrimary,
                 style = MaterialTheme.typography.titleSmall
             )
         }
@@ -154,7 +155,7 @@ private fun SetIconWithBackground(tab: YomuTab, isSelected: Boolean) {
             modifier = Modifier
                 .fillMaxWidth(0.75f)
                 .background(
-                    color = colorResource(id = R.color.colorYomuNavigationSelectedIcon),
+                    color = LocalAppColors.current.colorYomuNavigationSelectedIcon,
                     shape = RoundedCornerShape(50)
                 )
         ) {

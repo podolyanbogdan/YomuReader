@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val window: Window = this.window
             window.navigationBarColor =
-                resources.getColor(com.yomu.bottom_bar.R.color.colorYomuNavigationBackground, null)
+                resources.getColor(com.yomu.core.R.color.colorYomuNavigationBackground, null)
 
             YomuReaderTheme {
                 Scaffold(

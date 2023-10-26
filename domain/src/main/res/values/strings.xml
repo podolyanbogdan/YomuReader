@@ -1,3 +1,26 @@
 <resources>
-    <string name="app_name">domain</string>
+    <string name="filter_downloaded">Downloaded</string>
+    <string name="filter_unread">Unread</string>
+    <string name="filter_started">Started</string>
+    <string name="filter_bookmarked">Bookmarked</string>
+    <string name="filter_completed">Completed</string>
+
+
+    <string name="sort_alphabetcally">Alphabetically</string>
+    <string name="sort_last_read">Last read</string>
+    <string name="sort_last_update">Last Update check</string>
+    <string name="sort_unread_count">Unread count</string>
+    <string name="sort_total_chapters">Total Chapters</string>
+    <string name="sort_latest_chapter">Latest chapter</string>
+    <string name="sort_chapter_fetch_date">Chapter fetch date</string>
+    <string name="sort_date_added">Date added</string>
+
+    <string name="display_compact_grid">Compact grid</string>
+    <string name="display_comfortable_grid">Comfortable grid</string>
+    <string name="display_cover_only_grid">Cover-only grid</string>
+    <string name="display_list">List</string>
+
+    <string name="tab_reading">Reading</string>
+    <string name="tab_will_read">Will read</string>
+    <string name="tab_read_it">Read it</string>
 </resources>
